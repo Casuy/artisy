@@ -55,7 +55,7 @@ def get_artist_info(driver, artist_id, artist_link):
             num_block = fresnel.find_elements('xpath', '//*[contains(text(), " Artwork:") or contains(text(), " Artworks:")]')
             if len(num_block) > 0:
                 break
-        art_num = int(num_block[0].text.split(' ')[0])
+        art_num = int(num_block[0].text.split(' ')[0].replace(",", ""))
         # print('Number of artworks: {}'.format(art_num))
 
     artist_info = {
