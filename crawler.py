@@ -36,8 +36,8 @@ def click_next_page(driver):
         return False
 
 
-def get_artist_info(driver, artist_id, artist_link):
-    """Gets artist information, and returns artist details as a dictionary."""
+def get_artist_data(driver, artist_id, artist_link):
+    """Gets artist data, and returns artist details as a dictionary."""
     driver.get(artist_link)
     artist_block = driver.find_element('xpath', '//*[@id="main"]/div/div[2]/div/div[1]/div/div[2]')
     # //*[@id="main"]/div/div[2]/div/div[1]/div/div[2]
@@ -58,20 +58,22 @@ def get_artist_info(driver, artist_id, artist_link):
         art_num = int(num_block[0].text.split(' ')[0].replace(",", ""))
         # print('Number of artworks: {}'.format(art_num))
 
-    artist_info = {
+    artist_data = {
         'artist_id': artist_id,
         'artist_name': artist_name,
         'artist_info': artist_info,
+        'artist_link': artist_link,
         'art_num': art_num
     }
 
-    return artist_info
+    return artist_data
 
 
 def get_art_data(driver, art_link, artist_name):
     """Gets artwork information, creates a unique artwork_id, and returns artwork details as a dictionary."""
     driver.get(art_link)
     art_guid = uuid.uuid4().hex
+    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, '[data-test="artworkSidebar"]')))
     artwork_sidebar = driver.find_element('css selector', '[data-test="artworkSidebar"]')
     art_name = artwork_sidebar.find_element('xpath', './h1/i').text
     art_loc = artwork_sidebar.find_element('xpath', './h1').text.split(', ')[-1]

@@ -1,5 +1,4 @@
 import os
-from selenium.webdriver.support.ui import WebDriverWait
 from crawler import *
 from utils import *
 from config import *
@@ -56,10 +55,18 @@ def get_artist_and_art_data():
     artists_data = get_artists_data_from_files()
     driver = init_browser()
 
+    # Get links of existing data from output files
+    # existing_artists = get_existing_links(output_artist_file, k='artist_link')
+    existing_art = get_existing_links(output_asset_file, k='artwork_link')
+
     # Loop through each artist
     for artist in artists_data:
         artist_id, artist_name, artist_link = artist
-        artist_data = get_artist_info(driver, artist_id, artist_link)
+        # if is_crawled(artist_link, existing_artists):
+        #     print("This author {} has been crawled.".format(artist_name))
+        #     continue
+
+        artist_data = get_artist_data(driver, artist_id, artist_link)
 
         # Append artist data to csv file
         with open(output_artist_file, 'a', newline='', encoding='utf-8') as f:
@@ -76,6 +83,10 @@ def get_artist_and_art_data():
 
         # Loop through and collect artwork data for each artist
         for link in art_links:
+            if is_crawled(link, existing_art):
+                print("The artwork at {} has been crawled.".format(link))
+                continue
+
             art_data = get_art_data(driver, link, artist_data['artist_name'])
 
             # Append artwork data to csv files
@@ -95,7 +106,7 @@ def get_artist_and_art_data():
 def main():
     """Main function to run the program."""
     write_initial_csv_headers()
-    crawl_artists()
+    # crawl_artists()
     get_artist_and_art_data()
 
 
